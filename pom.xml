@@ -12,6 +12,8 @@
         <module>base</module>
         <module>big-data</module>
         <module>frame</module>
+        <module>scala</module>
+        <module>java</module>
     </modules>
 
     <properties>
@@ -20,6 +22,7 @@
         <junit.version>4.12</junit.version>
         <lombok.version>1.18.12</lombok.version>
         <scala.version>2.12.10</scala.version>
+        <guava.version>30.1.1-jre</guava.version>
 
     </properties>
 
@@ -41,6 +44,13 @@
                 <artifactId>scala-library</artifactId>
                 <version>${scala.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

@@ -8,12 +8,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="big-data" />
-        <module name="base" />
+        <module name="java" />
+        <module name="scala" />
         <module name="frame" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="algorithm" target="8" />
+      <module name="base" target="11" />
       <module name="java-base" target="8" />
     </bytecodeTargetLevel>
   </component>
