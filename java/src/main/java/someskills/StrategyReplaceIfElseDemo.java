@@ -10,7 +10,9 @@ import java.util.function.Function;
 
 /**
  * @description: 策略模式代替if else
- * 参考网址：https://mp.weixin.qq.com/s/hkypvNBkRjPM6HM51_jW9g
+ * 参考网址：
+ *      https://mp.weixin.qq.com/s/hkypvNBkRjPM6HM51_jW9g
+ *      https://bbs.huaweicloud.com/blogs/266177
  *
  * @author: movesan
  * @create: 2020-06-24 14:29
@@ -45,7 +47,7 @@ public class StrategyReplaceIfElseDemo {
     }
 
     /**
-     * ----------------- map 函数式接口方式 -----------------
+     * ----------------- map 函数式接口方式（表驱动） -----------------
      * 业务逻辑分派Map
      * Function为函数式接口，下面代码中 Function<String, String> 的含义是接收一个Stirng类型的变量，返回一个String类型的结果
      */
