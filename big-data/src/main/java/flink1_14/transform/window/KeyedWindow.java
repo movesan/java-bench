@@ -14,6 +14,7 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.evictors.CountEvictor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.ContinuousEventTimeTrigger;
 import org.apache.flink.streaming.api.windowing.triggers.CountTrigger;
@@ -21,6 +22,7 @@ import org.apache.flink.streaming.api.windowing.triggers.EventTimeTrigger;
 import org.apache.flink.streaming.api.windowing.triggers.PurgingTrigger;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
+import org.apache.flink.util.OutputTag;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -46,6 +48,8 @@ public class KeyedWindow {
 
     public static final String JOIN_KEY = "order_no";
 
+//    public static final OutputTag<StreamData> outputTag = new OutputTag<>("tag");
+
     @Test
     public void window() throws Exception {
         String[] args = {};
@@ -62,7 +66,7 @@ public class KeyedWindow {
                         .<StreamData>forBoundedOutOfOrderness(Duration.ofMinutes(5))
                         .withTimestampAssigner((event, timestamp) -> event.getTimeStamp()));
 
-        DataStream<Tuple2<String, Integer>> result = orderStream
+        SingleOutputStreamOperator<Tuple2<String, Integer>> result = orderStream
                 .keyBy(e -> e.getFields().get(JOIN_KEY))
 
                 // -------------------------- 1. Window Assigners --------------------------
@@ -106,7 +110,7 @@ public class KeyedWindow {
 //                })
 
                 // -------------------------- 1.1 Window Triggers --------------------------
-//                .trigger(CountTrigger.of(100))
+                .trigger(CountTrigger.of(100))
 //                .trigger(PurgingTrigger.of(CountTrigger.of(100)))
 //                .trigger(EventTimeTrigger.create())
 //                .trigger(ContinuousEventTimeTrigger.of(Time.minutes(2)))
@@ -133,7 +137,7 @@ public class KeyedWindow {
 //                })
 
                 // -------------------------- 1.2 Window Evictors --------------------------
-//                .evictor(CountEvictor.of(5))
+                .evictor(CountEvictor.of(5))
 //                .evictor(TimeEvictor.of(Time.of(5, TimeUnit.SECONDS)))
 //                .evictor(new Evictor<StreamData, TimeWindow>() {
 //                    @Override
@@ -146,6 +150,10 @@ public class KeyedWindow {
 //
 //                    }
 //                })
+
+                // -------------------------- 1.3 LateData --------------------------
+//                .allowedLateness(Time.seconds(5))
+//                .sideOutputLateData(outputTag)
 
                 // -------------------------- 2. Window Function --------------------------
 //                .aggregate(new AggregateFunction<StreamData, MyIntegerAccumulator, Tuple2<String, Integer>>() {
@@ -203,6 +211,7 @@ public class KeyedWindow {
 //                })
                 ;
 
+//        DataStream<StreamData> outputStream = result.getSideOutput(outputTag);
 
         result.print();
         env.execute("Keyed Window Example");

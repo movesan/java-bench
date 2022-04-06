@@ -1,4 +1,4 @@
-package flink1_14.project;
+package flink1_14.project.window;
 
 import flink1_14.common.RandomUtil;
 import flink1_14.common.mock.MockFactory;
@@ -10,7 +10,12 @@ import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.state.ListStateDescriptor;
+import org.apache.flink.api.common.state.ValueState;
+import org.apache.flink.api.common.state.ValueStateDescriptor;
+import org.apache.flink.api.common.typeinfo.TypeHint;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.typeutils.PojoTypeInfo;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -29,6 +34,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -107,35 +113,37 @@ public class WeiboTopN {
     }
 
     public static class BlogCountProcessFunc extends KeyedProcessFunction<String, BlogCount, String> {
-        private static final long serialVersionUID = -7286937645300388041L;
 
         //定义构造器可以按入参取排名
         private final int topN;
 
         // 求 top N，定义小顶堆
-        transient PriorityQueue<BlogCount> queue;
+//        transient PriorityQueue<BlogCount> queue;
 
         public BlogCountProcessFunc(int topN) {
             this.topN = topN;
         }
 
-        //使用liststatus并初始化
-        private ListState<BlogCount> listState;
+        private ValueState<PriorityQueue<BlogCount>> valueState;
 
         @Override
         public void open(Configuration parameters) throws Exception {
-            listState = getRuntimeContext()
-                    .getListState(new ListStateDescriptor<BlogCount>("list-state", BlogCount.class));
+            valueState = getRuntimeContext()
+                    .getState(new ValueStateDescriptor<PriorityQueue<BlogCount>>("value-state", TypeInformation.of(new TypeHint<PriorityQueue<BlogCount>>() {
+                    })));
 
-            queue = new PriorityQueue<>(topN, Comparator.comparingInt(BlogCount::getCount));
         }
 
         //定时器
         @Override
         public void processElement(BlogCount value, Context ctx, Collector<String> out) throws Exception {
-            listState.add(value);
-
+            PriorityQueue<BlogCount> queue = valueState.value();
+            if (queue == null) {
+                queue = new PriorityQueue<>(topN, Comparator.comparingInt(BlogCount::getCount));
+            }
             queue.add(value);
+
+            valueState.update(queue);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             // 窗口结束时间一秒之后触发 topN 计算
@@ -145,6 +153,8 @@ public class WeiboTopN {
         @Override
         public void onTimer(long timestamp, OnTimerContext ctx, Collector<String> out) throws Exception {
             ArrayList<BlogCount> blogCounts = new ArrayList<>();
+            PriorityQueue<BlogCount> queue = valueState.value();
+
             while (!queue.isEmpty()) {
                 blogCounts.add(queue.poll());
             }
@@ -155,11 +165,13 @@ public class WeiboTopN {
                     .append(new Timestamp(timestamp - 1000L))
                     .append("==============")
                     .append("\n");
-            for (int i = 0; i < Math.min(topN, blogCounts.size()); i++) {
-                BlogCount BlogCount = blogCounts.get(i);
+
+            int size = Math.min(topN, blogCounts.size());
+            for (int i = size - 1; i >= 0; i--) {
+                BlogCount blogCount = blogCounts.get(i);
                 sb.append("Top").append(i + 1);
-                sb.append(" BlogId:").append(BlogCount.getBlogId());
-                sb.append(" Counts:").append(BlogCount.getCount());
+                sb.append(" BlogId:").append(blogCount.getBlogId());
+                sb.append(" Counts:").append(blogCount.getCount());
                 sb.append("\n");
             }
             sb.append("==============")
@@ -167,8 +179,9 @@ public class WeiboTopN {
                     .append("==============")
                     .append("\n")
                     .append("\n");
-            listState.clear();
             out.collect(sb.toString());
+
+            valueState.clear();
             Thread.sleep(200);//方便查看结果时间休眠
         }
     }
@@ -194,8 +207,8 @@ public class WeiboTopN {
 
                 synchronized (ctx.getCheckpointLock()) {
                     UserBehavior userBehavior = new UserBehavior(
-                            RandomUtil.intervalRandom(1000, 5000),
-                            RandomUtil.getRandomElement(Stream.of("pv", "comment", "share").collect(Collectors.toList())),
+                            RandomUtil.intervalRandom(1000, 1100),
+                            RandomUtil.getRandomElement(Stream.of("view", "comment", "share").collect(Collectors.toList())),
                             System.currentTimeMillis()
                     );
 

@@ -89,6 +89,8 @@ public class NonKeyedWindow {
                     }
                 }).setParallelism(1); // 只能为 1
 
+        result.forward();
+
 
         result.print();
         env.execute("NonKeyed Window Example");
