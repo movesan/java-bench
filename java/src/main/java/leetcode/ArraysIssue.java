@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @description: 数组类
@@ -216,6 +217,59 @@ public class ArraysIssue {
             nums1[p--] = (nums1[p1] < nums2[p2]) ? nums2[p2--] : nums1[p1--];
 
         System.arraycopy(nums2, 0, nums1, 0, p2 + 1);
+    }
+
+    public void merge2(int[] nums1, int m, int[] nums2, int n) {
+        int p1 = m - 1;
+        int p2 = n - 1;
+        int p = m + n - 1;
+        while (p >= 0) {
+            if (p1 < 0) {
+                nums1[p--] = nums2[p2--];
+                continue;
+            }
+            if (p2 < 0) {
+                break;
+            }
+            if (nums1[p1] <= nums2[p2]) {
+                nums1[p--] = nums2[p2--];
+            } else {
+                nums1[p--] = nums1[p1--];
+            }
+        }
+    }
+
+    /**  ================= 数组中第K个最大元素  215 ================= **/
+    public int findKthLargest(int[] nums, int k) {
+        return sort(nums, 0, nums.length - 1, nums.length - k);
+    }
+
+    private int sort(int[] nums, int l, int r, int index) {
+        int p = partition(nums, l, r);
+        if (p == index) {
+            return nums[p];
+        } else {
+            return p < index ? sort(nums, p + 1, r, index) : sort(nums, l, p - 1, index);
+        }
+    }
+
+    private int partition(int[] nums, int l, int r) {
+        int v = nums[r];
+        int i = l;
+        for (int j=l; j<r; j++) {
+            if (nums[j] < v) {
+                swap(nums, i, j);
+                i++;
+            }
+        }
+        swap(nums, i, r);
+        return i;
+    }
+
+    private void swap(int[] a, int i, int j) {
+        int temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
     }
 
     @Test

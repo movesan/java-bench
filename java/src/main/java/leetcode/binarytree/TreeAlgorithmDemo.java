@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * @description: 二叉树的一些算法 demo
@@ -108,6 +109,35 @@ public class TreeAlgorithmDemo {
         return root;
     }
 
+    /**
+     * 翻转二叉树
+     * @param root
+     * @return
+     */
+    public TreeNode reverse(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode cur = root;
+        while (cur != null || !stack.isEmpty()) {
+            while (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
+            }
+            cur = stack.pop();
+            TreeNode left = cur.left;
+            TreeNode right = cur.right;
+            cur.left = right;
+            cur.right = left;
+            cur = right;
+        }
+        return root;
+
+    }
+
+    @Test
+    public void reverseTest() {
+        reverse(TreeNode.getTree()).show();
+    }
+
     @Test
     public void rightSideViewTest() {
         System.out.println("右视图：" + rightSideView(TreeNode.getTree()));
@@ -142,7 +172,7 @@ public class TreeAlgorithmDemo {
         root.right.right.right = q;
 
 //        System.out.println(lowestCommonAncestorIteration(root, p, q).val);
-        System.out.println(lowestCommonAncestorRecursion(root, p, q).val);
+//        System.out.println(lowestCommonAncestorRecursion(root, p, q));
     }
 
 }

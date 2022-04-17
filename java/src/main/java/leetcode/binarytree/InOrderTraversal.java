@@ -17,6 +17,12 @@ public class InOrderTraversal {
 
     /**
      * 迭代遍历
+     *      主要思想：
+     *          将左枝放入栈中，pop 返回的节点即是左节点，然后找右节点，
+     *              1.如果当前为叶子节点，那么右节点为null，此时 stack 不为空，下一个pop 返回的将是小分支上的 root 节点
+     *              2.如果当前节点为小分支 root 节点，pop 将返回右节点
+ *              所以整体顺序为  left -> root -> right
+     *          不断重复两个步骤
      * @param root
      * @return
      */

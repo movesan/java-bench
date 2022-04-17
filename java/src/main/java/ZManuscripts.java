@@ -1,8 +1,17 @@
+import leetcode.binarytree.TreeNode;
 import leetcode.linkedlist.ListNode;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Stack;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -15,10 +24,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ZManuscripts {
 
     private boolean flag = false;
-
-    public static void main(String[] args) {
-
-    }
 
     @Test
     public void test() {
@@ -109,5 +114,41 @@ public class ZManuscripts {
             }
         }
         return dummy.next;
+    }
+
+    @Test
+    public void test2() {
+        int[] arr = {7, 8, 9, 1, 2, 3, 4, 5, 6};
+        int target = 10;
+        int n = arr.length;
+        boolean flag = false;
+
+        for (int i=0; i<n; i++) {
+            for (int j=0; j<n-i-1; j++) {
+                if (arr[j] > arr[j+1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = temp;
+                    flag = true;
+                }
+            }
+            if (!flag) {
+                break;
+            }
+        }
+        System.out.println(Arrays.toString(arr));
+
+
+    }
+
+    @Test
+    public void test3() {
+        recursion(TreeNode.getTree());
+    }
+
+    public void recursion(TreeNode root) {
+        System.out.print(root.val);
+        if (root.left != null) recursion(root.left);
+        if (root.right != null) recursion(root.right);
     }
 }

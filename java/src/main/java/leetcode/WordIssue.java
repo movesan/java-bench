@@ -1,5 +1,10 @@
 package leetcode;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Stack;
+
 /**
  * @description: 单词问题
  * @author: movesan
@@ -30,5 +35,30 @@ public class WordIssue {
             j = i; // j 指向下个单词的尾字符
         }
         return res.toString().trim(); // 转化为字符串并返回
+    }
+
+    /**
+     * 有效括号
+     * @param s
+     * @return
+     */
+    public boolean isValid(String s) {
+        int n = s.length();
+        if (n % 2 == 1) { return false; }
+
+        Stack<Character> stack = new Stack<>();
+        Map<Character, Character> map = new HashMap<>();
+        map.put(')', '(');
+        map.put('}', '{');
+        map.put(']', '[');
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (!stack.isEmpty() && stack.peek() != null && stack.peek() == map.get(c)) {
+                stack.pop();
+                continue;
+            }
+            stack.add(c);
+        }
+        return stack.isEmpty();
     }
 }

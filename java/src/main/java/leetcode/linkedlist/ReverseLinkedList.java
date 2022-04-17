@@ -84,6 +84,29 @@ public class ReverseLinkedList {
         return head;
     }
 
+    /**
+     * ================= K 个一组翻转链表 25 =================
+     **/
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode cur = head;
+        ListNode prev = null;
+
+        ListNode prevListNode = null;
+        int i = 0;
+        while (cur != null) {
+            i++;
+            ListNode next = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = next;
+            if (i == k) {
+                prevListNode = prev;
+                prev = null;
+            }
+        }
+        return prev;
+    }
+
     public static void main(String[] args) {
         ListNode node = new ListNode(new int[]{1, 2, 3, 4, 5});
         System.out.println(reverse(node));

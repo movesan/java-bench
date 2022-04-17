@@ -12,13 +12,13 @@ import java.util.HashMap;
 public class LongestSubstring {
 
     /**
-     * 最长不重复子串长度（滑动窗口）
+     * 最长不重复子串长度（滑动窗口） leetcode: 3
      *
      * @return
      */
     @Test
     public void lengthOfLongestSubstringTest() {
-        System.out.println(lengthOfLongestSubstring("abcabcbb"));
+        System.out.println(lengthOfLongestSubstring("abcadccbb"));
     }
 
     public int lengthOfLongestSubstring(String s) {

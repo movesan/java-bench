@@ -27,6 +27,11 @@ public class Island {
         System.out.println(numIslands(param));
     }
 
+    /**
+     * 深度优先搜索，当遇到 “1” 后，进行上下左右搜索，并且将所有找到的 “1” 设置为 “0”，避免重复计算
+     * @param grid
+     * @return
+     */
     public int numIslands(char[][] grid) {
         if (grid == null || grid.length == 0) {
             return 0;
