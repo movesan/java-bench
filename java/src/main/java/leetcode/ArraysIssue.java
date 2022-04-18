@@ -256,7 +256,7 @@ public class ArraysIssue {
     private int partition(int[] nums, int l, int r) {
         int v = nums[r];
         int i = l;
-        for (int j=l; j<r; j++) {
+        for (int j = l; j < r; j++) {
             if (nums[j] < v) {
                 swap(nums, i, j);
                 i++;
@@ -272,11 +272,61 @@ public class ArraysIssue {
         a[j] = temp;
     }
 
+    /**  ================= 字符串相加 415 ================= **/
+    public static String addStrings(String num1, String num2) {
+        StringBuilder res = new StringBuilder("");
+        int i = num1.length() - 1;
+        int j = num2.length() - 1;
+        int carry = 0;
+        while (i >= 0 || j >= 0) {
+            //  - '0' ：char 转 int
+            int n1 = i >= 0 ? num1.charAt(i) - '0' : 0;
+            int n2 = j >= 0 ? num2.charAt(j) - '0' : 0;
+            int tmp = n1 + n2 + carry;
+            carry = tmp / 10;
+            res.append(tmp % 10);
+            i--;
+            j--;
+        }
+        if (carry == 1) res.append(1);
+        return res.reverse().toString();
+    }
+
+    /**  ================= 螺旋矩阵 54 ================= **/
+    public static List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> list = new ArrayList<Integer>();
+        if (matrix == null || matrix.length == 0) return list;
+        int height = matrix.length;
+        int width = matrix[0].length;
+        int i = 0;
+        // 统计矩阵从外向内的层数，如果矩阵非空，那么它的层数至少为1层
+        int count = (Math.min(height, width) + 1) / 2;
+        // 从外部向内部遍历，逐层打印数据
+        while (i < count) {
+            for (int j = i; j < width - i; j++) {
+                list.add(matrix[i][j]);
+            }
+            for (int j = i + 1; j < height - i; j++) {
+                list.add(matrix[j][(width - 1) - i]);
+            }
+            for (int j = (width - 1) - (i + 1); j >= i && (height - 1 - i != i); j--) {
+                list.add(matrix[(height - 1) - i][j]);
+            }
+            for (int j = (height - 1) - (i + 1); j >= i + 1 && (width - 1 - i) != i; j--) {
+                list.add(matrix[j][i]);
+            }
+            i++;
+        }
+        return list;
+    }
+
     @Test
     public void test() {
-        int[] nums = new int[]{-2, 1, -3, 4, -1, 2, 1, -5, 4};
+        int[] nums = new int[]{2, 1, 3, 4, 1, 2, 1, 5, 4};
 //        int res = maxSubArray(nums);
-        int res = maxSubArrayDP(nums);
-        System.out.println(res);
+//        int res = maxSubArrayDP(nums);
+
+
+//        System.out.println(lengthOfLIS(nums));
     }
 }

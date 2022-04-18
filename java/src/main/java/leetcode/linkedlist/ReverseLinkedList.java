@@ -46,6 +46,45 @@ public class ReverseLinkedList {
      * ================= 反转指定区间链表 92:https://leetcode-cn.com/problems/reverse-linked-list-ii/=================
      **/
 
+    static ListNode reverseBetween2(ListNode head, int left, int right) {
+        if (left == right) return head;
+        ListNode cur = head;
+        ListNode midHead = null;
+        ListNode firstTail = null;
+        ListNode midTail = null;
+        ListNode secondHead = null;
+
+        int count = 0;
+        while (cur != null) {
+            count++;
+            ListNode next = cur.next;
+            if (count == left - 1 || left == 1) {
+                firstTail = cur;
+            }
+            if (count == left) {
+                midTail = cur;
+            }
+            if (count >= left) {
+                cur.next = midHead;
+                midHead = cur;
+            }
+            if (count == right) {
+                secondHead = next;
+                break;
+            }
+            cur = next;
+        }
+
+        if (left == 1) {
+            midTail.next = secondHead;
+            return midHead;
+        } else {
+            firstTail.next = midHead;
+            midTail.next = secondHead;
+            return head;
+        }
+    }
+
     ListNode successor = null; // 后驱节点
 
     /**
@@ -109,6 +148,6 @@ public class ReverseLinkedList {
 
     public static void main(String[] args) {
         ListNode node = new ListNode(new int[]{1, 2, 3, 4, 5});
-        System.out.println(reverse(node));
+        System.out.println(reverseBetween2(node, 1, 5));
     }
 }

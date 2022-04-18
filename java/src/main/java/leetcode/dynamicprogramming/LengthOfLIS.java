@@ -1,5 +1,7 @@
 package leetcode.dynamicprogramming;
 
+import org.junit.Test;
+
 /**
  * @description: 最长上升子序列
  * @author: movesan
@@ -18,6 +20,7 @@ public class LengthOfLIS {
         for (int i = 1; i < nums.length; i++) {
             int max = 0;
             for (int j = 0; j < i; j++) {
+                // 保证比之前所有数都大
                 if (nums[j] < nums[i]) {
                     max = Math.max(max, dp[j]);
                 }
@@ -26,5 +29,13 @@ public class LengthOfLIS {
             res = Math.max(res, dp[i]);
         }
         return res;
+    }
+
+    @Test
+    public void test() {
+        int[] nums = new int[]{2, 1, 3, 4, 1, 2, 1, 5, 4};
+
+
+        System.out.println(lengthOfLIS(nums));
     }
 }
