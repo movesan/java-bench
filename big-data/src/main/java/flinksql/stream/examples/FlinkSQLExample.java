@@ -1,4 +1,4 @@
-package flinksql.stream;
+package flinksql.stream.examples;
 
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.EnvironmentSettings;
@@ -18,7 +18,7 @@ import static org.apache.flink.table.api.Expressions.$;
  * @date 2022/6/15 11:08
  * @version 1.0
  */
-public class FlinkSQLDemo {
+public class FlinkSQLExample {
 
     public static void main(String[] args) {
 
@@ -92,7 +92,7 @@ public class FlinkSQLDemo {
         );
 
         // compute revenue for all customers from France and emit to "RevenueFrance"
-        tableEnv.executeSql(
+        TableResult tableResultSql = tableEnv.executeSql(
                 "INSERT INTO RevenueFrance " +
                         "SELECT cID, cName, SUM(revenue) AS revSum " +
                         "FROM Orders " +

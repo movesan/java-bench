@@ -182,7 +182,7 @@ public class WeiboTopN {
         }
     }
 
-    static class UserBehaviorMock extends RichParallelSourceFunction<UserBehavior> {
+    public static class UserBehaviorMock extends RichParallelSourceFunction<UserBehavior> {
 
         private static final long serialVersionUID = -7286937645300388040L;
 
